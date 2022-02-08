@@ -1,9 +1,8 @@
-module TLV exposing (..)
+module TLV exposing (Object(..), decode)
 
 import Bitwise
 import Bytes exposing (Bytes, Endianness(..))
 import Bytes.Decode as Decode exposing (Decoder)
-import Hex.Convert
 import List exposing (map, reverse, sum)
 import Maybe
 
