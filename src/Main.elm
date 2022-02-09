@@ -1,11 +1,11 @@
-module Main exposing (main, Model, Msg)
+module Main exposing (Model, Msg, main)
 
 import Browser
 import Bytes exposing (Bytes, Endianness(..))
 import Bytes.Encode exposing (encode, string, unsignedInt16, unsignedInt8)
 import Hex.Convert
 import Html exposing (Html, div, text, textarea)
-import Html.Attributes exposing (style, placeholder, value)
+import Html.Attributes exposing (placeholder, style, value)
 import Html.Events exposing (onInput)
 import List
 import TLV
@@ -13,6 +13,7 @@ import TLV
 
 
 -- MAIN
+
 
 main : Program () Model Msg
 main =
