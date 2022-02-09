@@ -62,7 +62,7 @@ view model =
 
 parse : String -> List TLV.Object
 parse hex =
-    TLV.decode (hexToBytes hex)
+    TLV.decode (hexToBytes hex) |> Maybe.withDefault []
 
 
 hexToBytes : String -> Bytes

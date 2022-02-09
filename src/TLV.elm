@@ -4,7 +4,6 @@ import Bitwise
 import Bytes exposing (Bytes, Endianness(..))
 import Bytes.Decode as Decode exposing (Decoder)
 import List exposing (map, reverse, sum)
-import Maybe
 
 
 type Object
@@ -25,16 +24,7 @@ isConstructed tag =
     Bitwise.and firstByte 0x20 /= 0
 
 
-makeObject : Int -> Bytes -> Object
-makeObject tag value =
-    if isConstructed tag then
-        Constructed tag (decode value)
-
-    else
-        Primitive tag value
-
-
-decode : Bytes -> List Object
+decode : Bytes -> Maybe (List Object)
 decode data =
     let
         len =
@@ -42,11 +32,8 @@ decode data =
 
         decoder =
             tlvDecoder len
-
-        result =
-            Decode.decode decoder data
     in
-    Maybe.withDefault [] result
+    Decode.decode decoder data
 
 
 tagDecoder : Decoder Int
