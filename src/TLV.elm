@@ -83,14 +83,27 @@ lengthDecoder =
     Decode.unsignedInt8 |> Decode.andThen helper
 
 
-valueDecoder : Decoder Bytes
-valueDecoder =
+primitiveValueDecoder : Decoder Bytes
+primitiveValueDecoder =
     lengthDecoder |> Decode.andThen Decode.bytes
+
+
+constructedValueDecoder : Decoder (List Object)
+constructedValueDecoder =
+    lengthDecoder |> Decode.andThen tlvDecoder
 
 
 objectDecoder : Decoder Object
 objectDecoder =
-    Decode.map2 makeObject tagDecoder valueDecoder
+    let
+        helper tag =
+            if isConstructed tag then
+                Decode.map (Constructed tag) constructedValueDecoder
+
+            else
+                Decode.map (Primitive tag) primitiveValueDecoder
+    in
+    tagDecoder |> Decode.andThen helper
 
 
 tagLength : Int -> Int
@@ -143,8 +156,11 @@ type alias State =
 
 tlvStep : State -> Decoder (Decode.Step State (List Object))
 tlvStep ( len, tlv ) =
-    if len == 0 then
+    if len > 0 then
+        Decode.map (\x -> Decode.Loop ( len - objectLength x, x :: tlv )) objectDecoder
+
+    else if len == 0 then
         reverse tlv |> Decode.Done |> Decode.succeed
 
     else
-        Decode.map (\x -> Decode.Loop ( len - objectLength x, x :: tlv )) objectDecoder
+        Decode.fail
