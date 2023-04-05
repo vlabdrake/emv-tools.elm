@@ -4,8 +4,8 @@ import Browser
 import Bytes exposing (Bytes, Endianness(..))
 import Bytes.Encode exposing (encode, string, unsignedInt16, unsignedInt8)
 import Hex.Convert
-import Html exposing (Html, div, text, textarea)
-import Html.Attributes exposing (placeholder, style, value)
+import Html exposing (Html, div, text, textarea, ul, li)
+import Html.Attributes exposing (placeholder, style, value, class)
 import Html.Events exposing (onInput)
 import List
 import TLV
@@ -55,7 +55,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div []
+    div [class "main"]
         [ textarea [ placeholder "List TLVObject in hex", value model.content, onInput Change ] []
         , div [] [ visualize (parse model.content) ]
         ]
@@ -91,7 +91,7 @@ showTag tag =
 
 visualize : List TLV.Object -> Html Msg
 visualize tlv =
-    div [ style "padding-left" "1em" ] (visualizeHelper tlv [])
+    ul [] (visualizeHelper tlv [])
 
 
 visualizeHelper : List TLV.Object -> List (Html Msg) -> List (Html Msg)
@@ -100,10 +100,10 @@ visualizeHelper tlv acc =
         obj :: objs ->
             case obj of
                 TLV.Primitive tag value ->
-                    visualizeHelper objs (div [] [ text (showTag tag ++ ": " ++ Hex.Convert.toString value) ] :: acc)
+                    visualizeHelper objs (li [] [ text (showTag tag ++ ": " ++ Hex.Convert.toString value) ] :: acc)
 
                 TLV.Constructed tag children ->
-                    visualizeHelper objs (div [] [ text (showTag tag ++ ": "), visualize children ] :: acc)
+                    visualizeHelper objs (li [] [ text (showTag tag ++ ": "), visualize children ] :: acc)
 
         [] ->
             List.reverse acc
