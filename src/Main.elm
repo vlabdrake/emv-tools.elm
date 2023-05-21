@@ -8,6 +8,7 @@ import Html exposing (Html, div, text, textarea, ul, li)
 import Html.Attributes exposing (placeholder, style, value, class)
 import Html.Events exposing (onInput)
 import List
+import String
 import TLV
 
 
@@ -63,7 +64,7 @@ view model =
 
 parse : String -> List TLV.Object
 parse hex =
-    TLV.decode (hexToBytes (replace " " "" hex)) |> Maybe.withDefault []
+    TLV.decode (hexToBytes (String.replace " " "" hex)) |> Maybe.withDefault []
 
 
 hexToBytes : String -> Bytes
