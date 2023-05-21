@@ -63,7 +63,7 @@ view model =
 
 parse : String -> List TLV.Object
 parse hex =
-    TLV.decode (hexToBytes hex) |> Maybe.withDefault []
+    TLV.decode (hexToBytes (replace " " "" hex)) |> Maybe.withDefault []
 
 
 hexToBytes : String -> Bytes
